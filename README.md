@@ -1,68 +1,468 @@
-# BAD DECISION — V1
-## 1970s Analog Control Room Consequence Puzzle
+# BAD DECISION
 
-A browser-based consequential puzzle game built in the material language of **1970s mechanical laboratory equipment and analog control rooms**.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20Game-111827?style=flat-square)](https://bad-decision-mjjxncbwu.vercel.app/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=111827)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-111827?style=flat-square)](LICENSE)
 
----
+> A browser-based consequence puzzle game built around mechanical controls, telemetry, procedural thinking, and failure analysis.
 
-## Core Loop
+## Overview
+
+**BAD DECISION** is an interactive control-room puzzle game where every chamber presents a machine state, a set of physical-style controls, telemetry, operating constraints, and consequences.
+
+The game is designed around a simple idea:
+
 ```text
-OBSERVE → UNDERSTAND → PLAN → ACT → SYSTEM RESPONDS → LEARN → RETRY → SOLVE
+Observe → Understand → Plan → Act → System Responds → Learn → Retry → Solve
 ```
 
----
+Instead of relying on conventional puzzle menus, the interface presents switches, levers, breakers, dials, gauges, status messages, incident reports, and operating notes as parts of a simulated control system.
 
-## CHAMBER 01 — PRESSURE SYSTEM
+## Live Demo
 
-### 1. Specification & Behavior
-The pressure gauge is connected directly to the game's machine state as the single source of truth (`levelState.pressure`).
+[Open BAD DECISION](https://bad-decision-mjjxncbwu.vercel.app/)
 
-- **Initial State**:
-  - `pressure`: `800 PSI`
-  - `reliefBypass`: `SHUT`
-  - `condenserPump`: `STOPPED`
-  - `steamExhaust`: `SEALED`
-  - `bulkhead`: `DOGGED`
-  - `status`: `CRITICAL · 800 PSI. DO NOT ENGAGE HATCH.`
-- **Safe Threshold**: `< 50 PSI`
-- **Critical Threshold**: `> 750 PSI`
+## Highlights
 
-### 2. Physical Actuators
-1. **01. RELIEF BYPASS BLEED** (`SHUT` / `BLEED`):
-   - Activating to `BLEED` begins continuous pressure bleed with real-time steam hiss sound.
-   - Pressure visibly decrements: `800 → 760 → 720 → ... → 40 PSI`.
-   - The analog needle physically sweeps downward from critical (+72°) towards the safe zone (-110°).
-   - Toggling back to `SHUT` immediately halts the bleed.
-2. **02. CONDENSER CHILLER PUMP** (`STOPPED` / `CIRCULATING`):
-   - Circulates water to maintain condenser coil temperature.
-3. **03. MAIN STEAM EXHAUST** (`SEALED` / `DUMP`):
-   - High-pressure dump. If triggered while pressure > 50 PSI, causes `STEAM HAMMER PIPE RUPTURE`.
-4. **04. BULKHEAD HATCH RELEASE** (`DOGGED` / `RELEASE`):
-   - If pulled while pressure > 50 PSI: Triggers `EXPLOSIVE DECOMPRESSION INCIDENT`.
-   - If pulled while pressure < 50 PSI: Bulkhead dogs disengage cleanly and chamber is solved!
+- 50 playable chambers built from handcrafted core scenarios and generated extended scenarios.
+- Mechanical-style switches, levers, dials, breakers, and other actuators.
+- Telemetry gauges connected to the active game state.
+- Failure states with incident title, cause, report, and recovery advice.
+- Victory states with move tracking and progression.
+- Best-move tracking for completed chambers.
+- Incident archive for recorded failures.
+- Progressive unlocking of chambers.
+- Declassified solution support after repeated failed attempts.
+- Keyboard controls for faster interaction.
+- Sound effects for switching, steam, catastrophe, and successful clearance.
+- Dark and light interface themes.
+- Browser-local progress persistence through `localStorage`.
+- Responsive interface components for desktop and smaller screens.
 
-### 3. Gauge Mapping Formula
-```ts
-const minAngle = -120;
-const maxAngle = 120;
-const pressureRatio = Math.max(0, Math.min(1, state.pressure / 1000));
-const angle = minAngle + pressureRatio * (maxAngle - minAngle);
-needle.style.transform = `rotate(${angle}deg)`;
+## Game Flow
+
+```mermaid
+flowchart LR
+    A[Main Console] --> B[Select Chamber]
+    B --> C[Read Briefing]
+    C --> D[Inspect Controls]
+    D --> E[Plan Sequence]
+    E --> F[Operate Controls]
+    F --> G[Telemetry Updates]
+    G --> H{System State}
+    H -->|Safe| I[Continue]
+    H -->|Unsafe| J[Incident]
+    H -->|Solved| K[Victory]
+    J --> L[Review Cause]
+    L --> M[Reset / Retry]
+    M --> D
+    K --> N[Save Progress]
+    N --> O[Unlock Next Chamber]
 ```
 
----
+## Failure Analysis Flow
 
-## 5 HANDCRAFTED TEST CHAMBERS
+```mermaid
+flowchart TD
+    A[Operator Action] --> B[Level Evaluator]
+    B --> C{Consequence}
+    C -->|Failure| D[Incident Record]
+    C -->|Success| E[Victory State]
+    C -->|Continue| F[Updated Machine State]
+    D --> G[Cause + Report + Advice]
+    G --> H[Attempt Counter]
+    H --> I[Retry]
+    E --> J[Best Move Check]
+    J --> K[Progress Update]
+    F --> L[Telemetry / Status]
+```
 
-1. **Chamber 01: Pressure** (*Consequences*): Depressurize the 800 PSI steam chamber safely before releasing the bulkhead door dogs.
-2. **Chamber 02: Synchronicity** (*Timing*): Balance flywheel friction brake and speed governor to hold line frequency at 60 Hz before connecting the grid bus.
-3. **Chamber 03: The Discharge** (*Object Interaction*): Isolate the 440V knife switch and discharge the 600-Joule capacitor bank before replacing the blown ceramic fuse.
-4. **Chamber 04: The Bait** (*Misdirection*): Resist the enticing, giant red "EMERGENCY OVERRIDE" button (which dumps suffocating Halon gas) and execute the calibrated nitrogen bleed.
-5. **Chamber 05: The Cascade** (*Delayed Consequence*): Balance impeller agitation, nichrome heating, and reactant feed across stages to avoid thermal detonation.
+## Application Architecture
 
----
+```text
+Browser
+│
+├── React Application
+│   ├── App State
+│   ├── Game Modes
+│   ├── Level Selection
+│   ├── Progress Handling
+│   └── Theme Handling
+│
+├── Game Engine
+│   ├── Level Definitions
+│   ├── Initial State
+│   ├── Interactive Objects
+│   ├── Telemetry Gauges
+│   └── Consequence Evaluation
+│
+├── UI Layer
+│   ├── Control Room
+│   ├── Mechanical Controls
+│   ├── Gauges
+│   ├── Strip Chart
+│   ├── Incident Modal
+│   ├── Victory Modal
+│   ├── Hint Modal
+│   └── Incident Archive
+│
+├── Audio Layer
+│   └── Web Audio / Game Sound Controller
+│
+└── Browser Storage
+    └── localStorage
+        ├── Unlocked Levels
+        ├── Best Moves
+        ├── Incidents
+        ├── Sound Preference
+        └── Attempt Counts
+```
 
-## KEYBOARD SHORTCUTS
-- `1` – `9`: Actuate respective mechanical switches / valves
-- `R`: Instant console apparatus reset
-- `ESC`: Return to Main Console
+## Core Game Model
+
+Each chamber is represented by a `LevelDefinition`.
+
+A chamber contains:
+
+| Component | Purpose |
+|---|---|
+| Level metadata | Number, title, subtitle, theme |
+| Objective | Defines the required outcome |
+| Briefing | Establishes the operating context |
+| Warning | Highlights a critical constraint |
+| Solution hint | Provides optional guidance |
+| Solution steps | Describes a valid operating sequence |
+| Initial state | Defines the machine starting condition |
+| Interactive objects | Defines controls and available states |
+| Telemetry gauges | Visualizes machine values |
+| Status message | Communicates current operating state |
+| Evaluator | Determines continuation, failure, or victory |
+| Move limits | Controls the permitted operation cycle |
+
+## Chamber Progression
+
+The current source combines:
+
+- 5 core handcrafted chambers in `src/levels/data.ts`
+- 45 extended chambers generated by `generateExtendedLevels()` in `src/levels/extendedLevels.ts`
+
+Total:
+
+```text
+5 Core Chambers
+       +
+45 Extended Chambers
+       =
+50 Chambers
+```
+
+The extended scenarios cover themes including:
+
+- Hydrostatics and fluids
+- High voltage and dielectrics
+- Thermodynamics and steam
+- Pneumatics and gas flow
+- Nuclear and radiation systems
+- Mechanical inertia
+- Cryogenics and phase systems
+- Chemical reaction systems
+- Apex terminal facility scenarios
+
+## Project Structure
+
+```text
+bad-decision/
+├── index.html
+├── package.json
+├── bun.lock
+├── tsconfig.json
+├── vite.config.ts
+├── metadata.json
+├── .env.example
+├── .gitignore
+│
+├── public/
+│
+└── src/
+    ├── App.tsx
+    ├── main.tsx
+    ├── index.css
+    │
+    ├── assets/
+    │   └── images/
+    │
+    ├── audio/
+    │   └── sound.ts
+    │
+    ├── components/
+    │   ├── AnalogGauge.tsx
+    │   ├── ControlRoom.tsx
+    │   ├── DeclassifiedSolutionModal.tsx
+    │   ├── Gauge3D.tsx
+    │   ├── HintModal.tsx
+    │   ├── IncidentArchive.tsx
+    │   ├── IncidentModal.tsx
+    │   ├── LevelVictoryModal.tsx
+    │   ├── MechanicalSwitch.tsx
+    │   ├── StripChart.tsx
+    │   ├── TitleMenu.tsx
+    │   └── TopBar.tsx
+    │
+    ├── levels/
+    │   ├── data.ts
+    │   └── extendedLevels.ts
+    │
+    ├── storage/
+    │   └── progress.ts
+    │
+    └── types/
+        └── game.ts
+```
+
+## Technology Stack
+
+| Area | Technology |
+|---|---|
+| UI | React 19 |
+| Language | TypeScript |
+| Build Tool | Vite 8 |
+| Styling | Tailwind CSS 4 + project CSS |
+| Icons | Lucide React |
+| Motion | Motion |
+| Audio / Effects | Browser audio and canvas-confetti |
+| Persistence | Browser `localStorage` |
+| Package Lock | Bun |
+| Runtime | Modern web browser |
+
+## Installation
+
+### Prerequisites
+
+Install one of the following:
+
+- Node.js with npm
+- Bun
+
+A current modern browser is recommended for development and gameplay.
+
+### Option A — Bun
+
+```bash
+git clone https://github.com/Devputta/BAD-DECISION.git
+cd BAD-DECISION
+bun install
+bun run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+### Option B — npm
+
+```bash
+git clone https://github.com/Devputta/BAD-DECISION.git
+cd BAD-DECISION
+npm install
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+## Production Build
+
+Using Bun:
+
+```bash
+bun run build
+```
+
+Using npm:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+bun run preview
+```
+
+or:
+
+```bash
+npm run preview
+```
+
+## Available Scripts
+
+| Script | Purpose |
+|---|---|
+| `dev` | Starts the Vite development server on port 3000 |
+| `build` | Creates a production build |
+| `preview` | Serves the production build locally |
+| `lint` | Runs TypeScript type checking |
+| `clean` | Removes generated build/server artifacts |
+
+Run type checking with:
+
+```bash
+bun run lint
+```
+
+or:
+
+```bash
+npm run lint
+```
+
+## Controls
+
+### Keyboard
+
+| Key | Action |
+|---|---|
+| `1` – `9` | Operate the corresponding available control |
+| `R` | Reset the current chamber |
+| `ESC` | Return to the main console / close active overlays |
+
+Mouse and touch interaction can be used with the visible controls.
+
+## Progress and Storage
+
+The game stores progress in the browser using `localStorage`.
+
+The stored game data includes:
+
+```text
+Unlocked levels
+Best move counts
+Incident history
+Sound preference
+Level attempt counts
+```
+
+The application validates stored values when loading progress and falls back to a clean default state if stored data is invalid.
+
+No application server is required for the current game state and progress system.
+
+### Reset Local Progress
+
+To reset saved progress, clear the site's local storage for the deployed or local domain using the browser's developer tools or site-data controls.
+
+## Theme
+
+The interface supports two visual modes:
+
+```text
+Dark
+Light
+```
+
+The selected theme is stored locally in the browser.
+
+## Safety Note
+
+BAD DECISION is a software simulation and puzzle experience.
+
+The scenarios use terminology and concepts inspired by industrial control systems, electrical systems, pressure systems, mechanical equipment, chemical processes, and other technical environments. The game should not be treated as an operational procedure, engineering manual, or real-world safety instruction.
+
+Do not use the game's instructions as guidance for operating real machinery or hazardous equipment.
+
+## Development Principles
+
+The project is structured around:
+
+- State-driven interactions
+- Explicit consequence evaluation
+- Observable telemetry
+- Clear failure reporting
+- Repeatable level behavior
+- Local persistence
+- Small reusable UI components
+- Separation between level definitions and interface components
+
+## Validation Flow
+
+Before release:
+
+```mermaid
+flowchart LR
+    A[Edit] --> B[Type Check]
+    B --> C[Production Build]
+    C --> D[Local Preview]
+    D --> E[Play Critical Paths]
+    E --> F[Test Failure States]
+    F --> G[Test Victory States]
+    G --> H[Test Reset / Progress]
+    H --> I[Deploy]
+```
+
+Recommended commands:
+
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+## Deployment
+
+The application is a Vite client-side application and can be deployed to static hosting or platforms that support Vite builds.
+
+Typical production output:
+
+```text
+dist/
+```
+
+The current live deployment is available at:
+
+https://bad-decision-mjjxncbwu.vercel.app/
+
+## Environment Configuration
+
+The repository contains `.env.example`.
+
+Before adding environment variables, verify that the application actually consumes them. Do not commit real secrets.
+
+The current game source does not require a server-side API for its core gameplay or local progress system.
+
+## Contribution Guidelines
+
+When modifying the project:
+
+1. Keep game state transitions deterministic where possible.
+2. Keep level-specific rules inside level definitions.
+3. Avoid putting chamber-specific logic into reusable UI components unless necessary.
+4. Preserve keyboard accessibility when adding controls.
+5. Validate failure and victory conditions after changing a level.
+6. Avoid committing secrets or local environment files.
+7. Run type checking and a production build before opening a pull request.
+8. Keep dependency changes intentional and documented.
+
+## License
+
+This project is distributed under the MIT License.
+
+See [LICENSE](LICENSE) for the complete license text.
+
+## Security
+
+Security-related guidance is available in [SECURITY.md](SECURITY.md).
+
+## Documentation
+
+- [Installation Guide](INSTALL.md)
+- [Security Policy](SECURITY.md)
+- [MIT License](LICENSE)
