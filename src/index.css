@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* 1970s Industrial Palette - Dark Mode (Default Illuminated Night Control Room) */
+    --bg-app: #131211;
+    --bg-panel: #181715;
+    --bg-card: #1c1a18;
+    --bg-slot: #11100e;
+    --border-main: #332f28;
+    --border-subtle: #24221e;
+    --text-pri: #f4ede2;
+    --text-sec: #bfb7a8;
+    --text-mut: #7d766a;
+    --text-dim: #544f47;
+    --accent: #d96528;
+    --accent-hover: #ea7535;
+    --btn-sel-bg: #2b2723;
+    --btn-sel-text: #f4ede2;
+    --btn-unsel-bg: #121110;
+    --btn-unsel-text: #787165;
+    --modal-bg: #171614;
+    --modal-border: #3d3830;
+    --modal-box-bg: #11100e;
+    --modal-box-border: #292724;
+    --modal-box-text: #ded7ca;
+    --progress-track: #242220;
+  }
+
+  /* 1970s Industrial Palette - Light Mode (Technical Drafting Paper & Anodized Steel) */
+  .theme-light {
+    --bg-app: #f4efe6;
+    --bg-panel: #eae3d4;
+    --bg-card: #e5ded0;
+    --bg-slot: #dad1bf;
+    --border-main: #c4b9a2;
+    --border-subtle: #d3c8b2;
+    --text-pri: #1c1914;
+    --text-sec: #3d362c;
+    --text-mut: #6e6556;
+    --text-dim: #8c8270;
+    --accent: #d96528;
+    --accent-hover: #ea7535;
+    --btn-sel-bg: #d96528;
+    --btn-sel-text: #ffffff;
+    --btn-unsel-bg: #ddd5c2;
+    --btn-unsel-text: #4a4235;
+    --modal-bg: #f4eee2;
+    --modal-border: #c4b89e;
+    --modal-box-bg: #e6dfd0;
+    --modal-box-border: #cfc4ac;
+    --modal-box-text: #211d17;
+    --progress-track: #d8cfbd;
+  }
+
+  body {
+    background-color: var(--bg-app);
+    color: var(--text-pri);
+    font-family: 'IBM Plex Mono', 'Space Mono', monospace;
+  }
+}
+
+.font-display {
+  font-family: 'Libre Baskerville', 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-mono-tech {
+  font-family: 'IBM Plex Mono', 'Space Mono', monospace;
+}
+
+/* Reusable Theme Utility Classes */
+.rig-app {
+  background-color: var(--bg-app);
+  color: var(--text-pri);
+}
+
+.rig-panel {
+  background-color: var(--bg-panel);
+  border-color: var(--border-main);
+}
+
+.rig-card {
+  background-color: var(--bg-card);
+  border-color: var(--border-main);
+}
+
+.rig-slot {
+  background-color: var(--bg-slot);
+  border-color: var(--border-subtle);
+}
+
+.rig-text-pri {
+  color: var(--text-pri);
+}
+
+.rig-text-sec {
+  color: var(--text-sec);
+}
+
+.rig-text-mut {
+  color: var(--text-mut);
+}
+
+.rig-text-dim {
+  color: var(--text-dim);
+}
+
+.rig-border {
+  border-color: var(--border-main);
+}
+
+.rig-border-subtle {
+  border-color: var(--border-subtle);
+}
+
+.rig-modal {
+  background-color: var(--modal-bg);
+  border-color: var(--modal-border);
+  color: var(--text-pri);
+}
+
+.rig-modal-box {
+  background-color: var(--modal-box-bg);
+  border-color: var(--modal-box-border);
+  color: var(--modal-box-text);
+}
+
+/* Mechanical rivets */
+.screw-rivet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #7a7670, #383633);
+  box-shadow: inset 1px 1px 1px rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.6);
+  position: relative;
+}
+.screw-rivet::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  right: 20%;
+  height: 1.5px;
+  background: #1b1a18;
+  transform: translateY(-50%) rotate(42deg);
+}
+
+/* Paper label tape texture */
+.paper-label {
+  background-color: #eee7d7;
+  color: #1f1e1c;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.35);
+  border: 1px solid #c9c1b0;
+}
+
+/* Tactile metallic beveled button */
+.switch-bevel {
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.18), inset -1px -1px 0 rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.4);
+}
+
+.switch-pressed {
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.7), inset -1px -1px 0 rgba(255,255,255,0.08);
+}
+
+/* Amber filament glow */
+.amber-glow-active {
+  box-shadow: 0 0 14px 3px rgba(226, 115, 41, 0.65), inset 0 0 6px rgba(255, 220, 160, 0.8);
+}
+
+.amber-filament {
+  background: radial-gradient(circle at 45% 45%, #ffd494, #e27329 55%, #703610 90%);
+}
+
+.red-filament {
+  background: radial-gradient(circle at 45% 45%, #ff9e94, #c93b2b 55%, #601810 90%);
+}
+
+.green-filament {
+  background: radial-gradient(circle at 45% 45%, #b4f0b8, #4f8f53 55%, #18401a 90%);
+}
+
+/* CRT or needle scanline overlay */
+.analog-scanline {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "BAD DECISION",
+  "description": "A 1970s analog control room puzzle game where every hasty switch has a direct, humorous consequence. Observe, plan, and survive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
